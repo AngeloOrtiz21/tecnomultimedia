@@ -1,5 +1,6 @@
 class Juego {
-  Obstaculo obstaculo, obstaculo2;
+  //arreglo de objetos
+  Obstaculo [] obstaculo ;
   Calle calle;
   Fondo fondo; 
   Auto auto;
@@ -11,14 +12,13 @@ class Juego {
   int punto=300;
 
   //variable auto
+
   float Ay= 800;
   float Ax = 250;
 
   //variables obstaculos
-  float Ox1 = random(50, 250);
-  float Oy1 = -50;
-  float Ox2 = random(300, 450);
-  float Oy2 = -150;
+  int cantObs= 5;
+  
 
   float tamX = 50, tamY = 100;
 
@@ -44,10 +44,15 @@ class Juego {
     ganaste.resize(500, 900);
     fuente=createFont("fuente.ttf", 10);
 
+
+
     //inicializando los objetos
-    auto = new Auto( img1, Ax, Ay, tamX, tamY);
-    obstaculo = new Obstaculo(imgblanco, Ox1, Oy1, tamX, tamY);
-    obstaculo2 = new Obstaculo(imgblanco, Ox2-100, Oy2-500, tamX, tamY);
+    obstaculo = new Obstaculo [cantObs];
+    auto = new Auto( img1, Ax, Ay, tamX, tamY);  
+    //for para hacer el arreglo, sin simples palabras, 
+    for (int i=0; i<cantObs; i++) {
+      obstaculo[i] = new Obstaculo(imgblanco, random(1, 70)*i*2, random(80, 60)*i*5, tamX, tamY);
+    }   
     calle = new Calle (Cx, Cy);
   }
 
@@ -70,40 +75,35 @@ class Juego {
       fondo.dibujar();
       calle.dibujar();
       calle.mover();
-      obstaculo.dibujar();
-      obstaculo.mover();
-      obstaculo2.dibujar();
-      obstaculo2.mover();
+      for (int i=0; i<cantObs; i++) {
+        obstaculo[i].dibujar();
+        obstaculo[i].mover();
+      }
+
+
+
+
       auto.dibujar();
       auto.mover();
       puntos = new Puntos (250, 70, punto);
       puntos.dibujar();
-      //auto.dibujarVida();
 
-      //resta de puntos de colision
-      if (obstaculo.colision(auto.posx, auto.posy, auto.tamX, auto.tamY)) {
-        punto=punto-10;
-        auto.choque();
-        efecto.play();
-        efecto.rewind();       
-        println(puntos);
+      for (int i=0; i<cantObs; i++) {
+        //resta de colisiones
+        if (obstaculo[i].colision(auto.posx, auto.posy, auto.tamX, auto.tamY)) {
+          punto=punto-10;
+          auto.choque();
+          efecto.play();
+          efecto.rewind();       
+          println(puntos);
+        }
+        //suma de puntos de colisiones 
+        if (!obstaculo[i].colision(auto.posx, auto.posy, auto.tamX, auto.tamY)) {
+          punto++;
+          println(puntos);
+        }
       }
-      if (obstaculo2.colision(auto.posx, auto.posy, auto.tamX, auto.tamY)) {
-        punto=punto-10;
-        auto.choque();
-        efecto.play();
-        efecto.rewind();
-        println(puntos);
-      }
-      //suma de puntos de colisiones 
-      if (!obstaculo.colision(auto.posx, auto.posy, auto.tamX, auto.tamY)) {
-        punto++;
-        println(puntos);
-      }
-      if (!obstaculo2.colision(auto.posx, auto.posy, auto.tamX, auto.tamY)) {
-        punto++;
-        println(puntos);
-      }
+
       //perder
       if (punto<=-200) {
         estado=2;

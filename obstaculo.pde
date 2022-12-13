@@ -19,10 +19,9 @@ class Obstaculo {
   void mover() {
     if (posY < 1070) {
       posY = posY+15;
-    }
-    if (posY >= 1050) {
-      posY = -50;
-      posX = random(50, 250);
+    } else if (posY >= 1050) {
+      posY = random(-150, -100);
+      posX = random(50, 350);
     }
   }
   //colision
